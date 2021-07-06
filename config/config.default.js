@@ -28,6 +28,14 @@ module.exports = appInfo => {
     fileName: 'httpLog.log',
   };
 
+  config.auth = {
+    exclude: [],
+  };
+
+  config.jwt = {
+    secret: 'ydzhenhaokan',
+  };
+
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
