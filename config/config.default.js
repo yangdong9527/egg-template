@@ -36,6 +36,20 @@ module.exports = appInfo => {
     secret: 'ydzhenhaokan',
   };
 
+  config.sequelize = {
+    dialect: 'mysql',
+    database: 'blog',
+    timezone: '+08:00',
+    host: '127.0.0.1',
+    port: 3306,
+    username: 'root',
+    password: '123456',
+    define: {
+      freezeTableName: true, // 强制表名称 等于模型名称
+      timestamps: false,
+    },
+  };
+
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',

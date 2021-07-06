@@ -252,3 +252,149 @@ module.exports = HomeController;
 ```
 
 nice 感觉瞬间就方便了一大堆啊
+
+
+
+### 常见插件的使用
+
++ egg-validate
++ egg-jwt
++ md5
++ egg-sequelize
+
+#### 参数校验
+
+```shell
+npm i egg-validate -S
+```
+
+配置和使用
+
+```js
+// plugin.js 配置
+exports.validate = {
+    enable: true,
+    package: 'egg-validate'
+}
+
+// 使用方式 有两种
+// 第一种
+const rule = { title: { required: true, type: string} }
+ctx.validate(rule,ctx.request.body)
+```
+
+
+
+#### egg-jwt使用
+
+```shell
+npm i egg-jwt -S
+```
+
+基本配置和使用
+
+```js
+//plugin.js
+exports.jwt = {
+    enable: true,
+    package: 'egg-jwt'
+}
+//config.default.js
+config.jwt = {
+  	secret: 'miyao'
+}
+// 生成 token
+const token = app.jwt.sign({ userId: 1 }, app.config.jwt.secret , { expiresIn: 60 * 60 * 1 })
+// 解析 校验 token
+try {
+    const params = ctx.app.jwt.verify(token, ctx.app.config.jwt.secret)
+} catch (error) {
+    if(err.message === 'jwt expired') {
+        // 过期
+    } else {
+        // 错误
+    }
+}
+```
+
+
+
+#### egg-sequelize 使用
+
+查询文档[Sequelize文档](https://www.sequelize.com.cn/)
+
+```shell
+npm i egg-sequelize mysql2 -S
+```
+
+##### 配置
+
+```js
+// config.default.js
+config.sequelize = {
+    dialect: 'mysql',
+    database: 'blog',
+    timezone: '+08:00',
+    host: '127.0.0.1',
+    port: 3306,
+    username: 'root',
+    password: '123456',
+    define: {
+        freezeTableName: true, // 强制表名称 等于模型名称
+        timestamps: false,
+    },
+};
+```
+
+
+
+##### 创建表
+
+创建在 `app/model`下
+
+```js
+'use strict';
+
+module.exports = app => {
+  const { STRING, INTEGER, DATE, BOOLEAN } = app.Sequelize;
+  const User = app.model.define('user', {
+    id: { type: INTEGER, primaryKey: true, autoIncrement: true },
+    username: STRING,
+    password: STRING,
+    avatar: STRING,
+    sign: STRING,
+    createTime: DATE,
+    updateTime: DATE,
+    isDelete: {
+      type: BOOLEAN,
+      dafaultValue: false,
+      get() {
+        const val = this.getDataValue('isDelete');
+        return val === 1;
+      },
+      set(val) {
+        this.setDataValue('isDelete', val ? 1 : 0);
+      },
+    },
+  });
+
+  return User;
+};
+```
+
+你可以通过`ctx.model.User`来访问数据库
+
+##### 常见操作
+
+**新增一条数据**
+
+**修改一条数据**
+
+**删除一条数据**
+
+**查询一条数据**
+
+**分页查询**
+
+**联表查询**
+
